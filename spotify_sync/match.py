@@ -3,6 +3,11 @@ import deezer as Deezer
 from deezer.errors import DataException
 from concurrent.futures import ThreadPoolExecutor, wait
 from requests import JSONDecodeError
+import logging
+
+# Set up logging if not already done
+#logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 
 # local imports
 from spotify_sync.dataclasses import Config
@@ -51,12 +56,23 @@ class SongMatcher:
         self.match_payload = None
 
     def _match_via_isrc(self):
-        track = Deezer.API.get_track(client.api, f"isrc:{self.song.isrc}")
+        try:
+            track = Deezer.API.get_track(client.api, f"isrc:{self.song.isrc}")
+            if track is None:
+                raise ValueError("No data returned for the track.")
+            
+            # If track is successfully fetched, set match attributes
+            #self._logger.debug("Matched - [isrc]")
+            self.match = True
+            self.match_type = "isrc"
+            self.match_payload = track
 
-        self._logger.debug("Matched - [isrc]")
-        self.match = True
-        self.match_type = "isrc"
-        self.match_payload = track
+        except Exception as e:
+            self._logger.error(f"Error matching song: {self.song.title} (ISRC: {self.song.isrc}): {e}")
+            # Set match to False and provide an error message
+            self.match = False
+            self.match_message = f"Error matching: {e}"
+            self.match_payload = None  # Ensure match_payload is None on error
 
     def _match_fuzzy(self):
         try:
