@@ -186,14 +186,21 @@ class SpotifyPaginator:
     def _exclude_playlists(self, playlists, playlists_to_exclude) -> dict:
         ret = {}
         for playlist in playlists:
-            if playlist["name"] not in playlists_to_exclude:
+            # Check if the playlist is None
+            if playlist is None:
+                self._logger.debug("Found a None playlist, skipping")
+                continue  # Skip this iteration if playlist is None
+
+            # Check if the "name" key exists in the playlist to avoid KeyError
+            if "name" in playlist and playlist["name"] not in playlists_to_exclude:
                 ret[playlist["id"]] = playlist
             else:
                 self._logger.debug(
-                    f'{playlist["name"]} was in exclude list, skipping'
+                    f'{playlist["name"] if playlist else "Unknown"} was in exclude list, skipping'
                 )
 
         return ret
+
 
     def _get_all(self, route: str, **kwargs) -> dict:
         assert route in ["liked", "playlists", "playlist-songs"]
