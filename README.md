@@ -56,13 +56,6 @@ spotify_sync run auto --profile myFirstProfile
 Further configuration is required, details for which can be found at the [docs](https://docs.spotify-sync.jbh.cloud/).
 
 
-## Support
-
-If you use or enjoy this project, please give it a :star: or
-
-<a href="https://www.buymeacoffee.com/jbhcloud" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
-
-
 ### Disclaimer
 
 This tool was written for educational purposes. I will not be responsible if you use this program in bad faith. By using it, you are accepting the [Deezer Terms of Use](https://www.deezer.com/legal/cgu).
