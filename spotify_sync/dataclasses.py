@@ -100,37 +100,31 @@ class SpotifySong:
         self.explicit: explicit
 
     def from_api(self, song: dict):
-        self.id_ = (
-            song["track"]["id"] if song.get("track") is not None else None
-        )
+        # Safely get the 'track' dictionary or default to an empty dictionary
+        track = song.get("track", {})
+        
+        if not track:
+            # If 'track' is None or empty, initialize fields to default values
+            self.id_ = None
+            self.artist = None
+            self.album = None
+            self.title = None
+            self.url = None
+            self.isrc = None
+            self.explicit = None
+            return  # Exit early if no track data is available
+        
+        # Safely access each attribute within 'track'
+        self.id_ = track.get("id", None)
         self.artist = (
-            song["track"]["artists"][0]["name"]
-            if song.get("track") is not None
-            else None
+            track.get("artists", [{}])[0].get("name", None) 
+            if track.get("artists") else None
         )
-        self.album = (
-            song["track"]["album"]["name"]
-            if song.get("track") is not None
-            else None
-        )
-        self.title = (
-            song["track"]["name"] if song.get("track") is not None else None
-        )
-        self.url = (
-            song["track"]["external_urls"].get("spotify")
-            if song.get("track") is not None
-            else None
-        )
-        self.isrc = (
-            song["track"]["external_ids"].get("isrc")
-            if song.get("track") is not None
-            else None
-        )
-        self.explicit = (
-            song["track"]["explicit"]
-            if song.get("track") is not None
-            else None
-        )
+        self.album = track.get("album", {}).get("name", None)
+        self.title = track.get("name", None)
+        self.url = track.get("external_urls", {}).get("spotify", None)
+        self.isrc = track.get("external_ids", {}).get("isrc", None)
+        self.explicit = track.get("explicit", None)
 
     def from_dict(self, dictionary: dict):
         self.id_ = dictionary["id_"]
